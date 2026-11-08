@@ -1,0 +1,43 @@
+sequenceDiagram
+    actor Buyer as 发起用户
+    participant UI as 用户界面
+    participant Service as TradeService
+    participant TradeDAO as TradeDAO
+    participant ItemDAO as ItemDAO
+    participant DB as SQLite数据库
+    actor Seller as 物品所有者
+
+    Buyer->>UI: 发起物品流转请求
+    UI->>Service: createTrade(trade)
+    Service->>Service: 校验物品及用户信息
+    Service->>TradeDAO: insert(trade)
+    TradeDAO->>DB: INSERT INTO trade
+    DB-->>TradeDAO: 返回执行结果
+    TradeDAO-->>Service: 返回流转记录
+
+    Service-->>UI: 请求提交成功
+    UI-->>Seller: 通知新的流转请求
+
+    Seller->>UI: 接受流转请求
+    UI->>Service: processTrade(tradeId)
+    Service->>TradeDAO: 更新流转状态
+    TradeDAO->>DB: UPDATE trade
+    DB-->>TradeDAO: 更新结果
+
+    Service-->>UI: 返回处理结果
+    UI-->>Buyer: 显示流转状态
+
+    Buyer->>UI: 确认完成流转
+    UI->>Service: completeTrade(tradeId)
+
+    activate Service
+    Service->>DB: BEGIN TRANSACTION
+    Service->>TradeDAO: 更新交易为COMPLETED
+    Service->>ItemDAO: 更新物品为COMPLETED
+    Service->>DB: 更新完成时间及减排量
+    Service->>DB: COMMIT
+    deactivate Service
+
+    Service-->>UI: 返回完成结果
+    UI-->>Buyer: 显示流转完成
+    UI-->>Seller: 显示流转完成

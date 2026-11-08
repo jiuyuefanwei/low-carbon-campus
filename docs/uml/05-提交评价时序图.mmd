@@ -1,0 +1,30 @@
+sequenceDiagram
+    actor User as 评价用户
+    participant UI as 用户界面
+    participant Service as ReviewService
+    participant DAO as ReviewDAO
+    participant DB as SQLite数据库
+
+    User->>UI: 填写评分及评价内容
+    UI->>Service: submitReview(review)
+
+    Service->>Service: 校验评价信息
+    Service->>DB: 检查流转状态及评价权限
+    DB-->>Service: 返回检查结果
+
+    alt 满足评价条件
+        Service->>DB: BEGIN TRANSACTION
+        Service->>DAO: insert(review)
+        DAO->>DB: INSERT INTO review
+        DB-->>DAO: 返回插入结果
+
+        Service->>DB: 更新被评价用户信用分
+        DB-->>Service: 返回更新结果
+        Service->>DB: COMMIT
+
+        Service-->>UI: 返回评价成功
+        UI-->>User: 显示评价成功信息
+    else 不满足评价条件
+        Service-->>UI: 返回校验失败信息
+        UI-->>User: 提示无法提交评价
+    end
