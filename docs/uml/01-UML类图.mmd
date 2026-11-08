@@ -1,0 +1,142 @@
+classDiagram
+    class User {
+        +Long id
+        +String username
+        +String passwordHash
+        +String displayName
+        +String phone
+        +String email
+        +String role
+        +Integer creditScore
+        +String status
+    }
+
+    class Category {
+        +Long id
+        +String name
+        +String description
+        +Double carbonFactor
+        +Boolean isActive
+    }
+
+    class Item {
+        +Long id
+        +Long sellerId
+        +Long categoryId
+        +String name
+        +String description
+        +Double expectedPrice
+        +String tradeType
+        +String status
+        +String tags
+        +String imagePath
+    }
+
+    class Favorite {
+        +Long id
+        +Long userId
+        +Long itemId
+        +String createdAt
+    }
+
+    class Trade {
+        +Long id
+        +Long itemId
+        +Long initiatorId
+        +Long ownerId
+        +String tradeType
+        +String status
+        +String message
+        +Double agreedPrice
+        +Double carbonReduction
+        +String completedAt
+    }
+
+    class Review {
+        +Long id
+        +Long tradeId
+        +Long reviewerId
+        +Long revieweeId
+        +Integer rating
+        +String content
+    }
+
+    class UserDAO {
+        <<interface>>
+        +insert(User user)
+        +findById(Long id)
+        +findByUsername(String username)
+        +update(User user)
+    }
+
+    class ItemDAO {
+        <<interface>>
+        +insert(Item item)
+        +findById(Long id)
+        +findByCondition()
+        +update(Item item)
+        +delete(Long id)
+    }
+
+    class TradeDAO {
+        <<interface>>
+        +insert(Trade trade)
+        +findById(Long id)
+        +update(Trade trade)
+    }
+
+    class ReviewDAO {
+        <<interface>>
+        +insert(Review review)
+        +findByTradeId(Long tradeId)
+    }
+
+    class UserService {
+        +register(User user)
+        +login(String username, String password)
+        +updateUser(User user)
+    }
+
+    class ItemService {
+        +publishItem(Item item)
+        +updateItem(Item item)
+        +searchItems()
+        +takeDownItem(Long itemId)
+    }
+
+    class TradeService {
+        +createTrade(Trade trade)
+        +processTrade(Long tradeId)
+        +completeTrade(Long tradeId)
+    }
+
+    class ReviewService {
+        +submitReview(Review review)
+        +updateCreditScore(Long userId)
+    }
+
+    class DatabaseManager {
+        +getConnection()
+        +closeConnection()
+    }
+
+    User "1" --> "0..*" Item : 发布
+    Category "1" --> "0..*" Item : 分类
+    User "1" --> "0..*" Favorite : 收藏
+    Item "1" --> "0..*" Favorite : 被收藏
+    Item "1" --> "0..*" Trade : 流转记录
+    User "1" --> "0..*" Trade : 发起者
+    User "1" --> "0..*" Trade : 物品所有者
+    Trade "1" --> "0..2" Review : 评价
+    User "1" --> "0..*" Review : 评价者
+    User "1" --> "0..*" Review : 被评价者
+
+    UserService --> UserDAO
+    ItemService --> ItemDAO
+    TradeService --> TradeDAO
+    ReviewService --> ReviewDAO
+
+    UserDAO --> DatabaseManager
+    ItemDAO --> DatabaseManager
+    TradeDAO --> DatabaseManager
+    ReviewDAO --> DatabaseManager
