@@ -97,11 +97,27 @@ classDiagram
         +updateUser(User user)
     }
 
+    class CategoryDAO {
+        <<interface>>
+        +findActive()
+        +insert(Category category)
+        +update(Category category)
+    }
+
+    class FavoriteDAO {
+        <<interface>>
+        +insert(Favorite favorite)
+        +delete(Long userId, Long itemId)
+        +findByUserId(Long userId)
+    }
+
     class ItemService {
         +publishItem(Item item)
         +updateItem(Item item)
         +searchItems()
         +takeDownItem(Long itemId)
+        +addFavorite(Long userId, Long itemId)
+        +removeFavorite(Long userId, Long itemId)
     }
 
     class TradeService {
@@ -133,10 +149,14 @@ classDiagram
 
     UserService --> UserDAO
     ItemService --> ItemDAO
+    ItemService --> FavoriteDAO
+    ItemService --> CategoryDAO
     TradeService --> TradeDAO
     ReviewService --> ReviewDAO
 
     UserDAO --> DatabaseManager
     ItemDAO --> DatabaseManager
+    CategoryDAO --> DatabaseManager
+    FavoriteDAO --> DatabaseManager
     TradeDAO --> DatabaseManager
     ReviewDAO --> DatabaseManager
