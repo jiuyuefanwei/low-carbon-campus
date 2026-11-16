@@ -1,0 +1,22 @@
+sequenceDiagram
+    actor User as 用户
+    participant UI as 用户界面
+    participant Service as ItemService
+    participant DAO as ItemDAO
+    participant DB as SQLite数据库
+
+    User->>UI: 填写物品信息并提交
+    UI->>Service: publishItem(item)
+    Service->>Service: 校验物品信息
+    Service->>DAO: insert(item)
+    DAO->>DB: INSERT INTO item
+    DB-->>DAO: 返回执行结果
+    DAO-->>Service: 返回保存结果
+
+    alt 保存成功
+        Service-->>UI: 发布成功
+        UI-->>User: 显示发布成功信息
+    else 保存失败
+        Service-->>UI: 返回失败信息
+        UI-->>User: 提示发布失败
+    end

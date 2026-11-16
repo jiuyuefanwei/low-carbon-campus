@@ -1,0 +1,38 @@
+sequenceDiagram
+    actor User as 用户
+    participant UI as 登录界面
+    participant Service as UserService
+    participant DAO as UserDAO
+    participant DB as SQLite数据库
+
+    User->>UI: 输入用户名和密码
+    User->>UI: 点击登录
+    UI->>Service: login(username, password)
+
+    Service->>Service: 校验输入信息
+    Service->>DAO: findByUsername(username)
+    DAO->>DB: SELECT * FROM user WHERE username = ?
+    DB-->>DAO: 返回用户信息
+    DAO-->>Service: 返回用户对象
+
+    alt 用户不存在
+        Service-->>UI: 返回账号不存在提示
+        UI-->>User: 显示登录失败信息
+    else 用户存在
+        Service->>Service: 验证密码摘要
+
+        alt 密码不正确
+            Service-->>UI: 返回密码错误提示
+            UI-->>User: 显示登录失败信息
+        else 密码正确
+            Service->>Service: 检查用户账号状态
+
+            alt 账号已禁用
+                Service-->>UI: 返回账号已禁用提示
+                UI-->>User: 显示账号状态异常
+            else 账号正常
+                Service-->>UI: 返回登录成功及用户信息
+                UI-->>User: 进入系统主界面
+            end
+        end
+    end
