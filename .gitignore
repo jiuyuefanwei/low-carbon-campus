@@ -1,5 +1,9 @@
 # Compiled class file
 *.class
+target/
+
+# Local SQLite database
+data/*.db
 
 # Log file
 *.log
