@@ -30,7 +30,7 @@
 
 ## 目录
 
-当前迭代以需求和设计为主。`src/` 与 `pom.xml` 从第 3 周起按下面的结构加入，业务代码和 Swing 界面在之后阶段提交。
+第 3/4 周实现核心业务和单元测试：`pom.xml` 与 `src/` 在本迭代加入，先完成用户、物品的实体、JDBC 和 JUnit。Swing 界面从第 5 周开始。
 
 ```text
 low-carbon-campus/
@@ -70,6 +70,18 @@ low-carbon-campus/
 
 三人都要写代码和测试。每周至少讨论一次，记录放在 [`docs/会议记录/`](docs/会议记录/README.md)。分工详见 [`docs/02-分工说明.md`](docs/02-分工说明.md)。
 
+### 第 3/4 周分工
+
+本迭代交付用户、类别、物品、收藏的实体、数据访问和业务规则，以及能跑通的 JUnit。流转、评价、统计在本迭代一并完成，第 5 周再接界面。DAO 只负责 SQL，事务由 Service 提交或回滚。
+
+| 成员 | 第 3 周 | 第 4 周 |
+| --- | --- | --- |
+| 张天慧 | Maven 骨架、`common`（数据库连接单例、当前登录用户、统一异常），并保证初始化后六张表和初始类别可用 | 物品筛选策略、减排估算策略、关键操作日志 |
+| 王嘉苗 | 用户、类别、物品、收藏的实体和 JDBC，以及插入、查询测试 | 流转、评价的实体和 JDBC；发起意向、确认完成、提交评价三组事务所需的 SQL |
+| 王馨瑶 | 先补全 `docs/03-模块与接口.md` 的接口、非法输入、测试点和信用分规则，再实现用户与物品 Service 及业务测试 | 流转、评价、统计 Service 与测试，统计结果导出 CSV |
+
+合并顺序：`feature/zhangtianhui-maven-common` → `feature/wangjiamiao-user-item-dao` → `feature/wangxinyao-user-item-service` → `feature/wangjiamiao-trade-review-dao` → `feature/wangxinyao-trade-stats-service` → `feature/zhangtianhui-strategy-log`。第 4 周末用一条测试串起注册、登录、发布、检索、收藏、流转、评价和统计。详细结论见 [`docs/会议记录/2026-11-16.md`](docs/会议记录/2026-11-16.md)。
+
 ## 协作方式
 
 `main` 已设置保护，不能直接推送或在网页上直接提交。所有改动从功能分支发起 Pull Request，审查通过后再合并。
@@ -100,4 +112,5 @@ git push -u origin HEAD
 | [`docs/04-数据库设计.md`](docs/04-数据库设计.md) | 表、字段、关系与事务 |
 | [`docs/05-界面与设计模式.md`](docs/05-界面与设计模式.md) | 界面清单、菜单结构、设计模式选用 |
 | [`docs/uml/`](docs/uml/README.md) | 类图与时序图 |
+| [`docs/会议记录/2026-11-16.md`](docs/会议记录/2026-11-16.md) | 第 3/4 周分工与合并顺序 |
 | [`sql/init.sql`](sql/init.sql) | 建表脚本 |
